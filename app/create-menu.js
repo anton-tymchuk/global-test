@@ -20,7 +20,6 @@ function menuBuilder(items, parentId) {
 
    content += '</ul>';
 
-
    return content.replace(/<ul class=\'submenu\'><\/ul>/g, '');
 }
 
