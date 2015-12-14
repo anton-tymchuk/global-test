@@ -50,15 +50,20 @@
 
 	var _http2 = _interopRequireDefault(_http);
 
+	var _createMenu = __webpack_require__(2);
+
+	var _createMenu2 = _interopRequireDefault(_createMenu);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	(0, _http2.default)(url).get().then(function (data) {
-		items = JSON.parse(data);
-	}).catch(callback.error);
+	var URL = './data/items.json';
 
-	setTimeout(function () {
-		console.log(items);
-	}, 100);
+	(0, _http2.default)(URL).get().then(function (data) {
+	    return JSON.parse(data);
+	}).then(function (data) {
+	    var items = (0, _createMenu2.default)(data, 0);
+	    document.getElementById('main-menu').insertAdjacentHTML('beforeEnd', items);
+	}).catch(console.log.bind(console));
 
 /***/ },
 /* 1 */
@@ -105,16 +110,43 @@
 		};
 	}
 
-	var url = 'items.json';
-
-	var callback = {
-		success: function success(data) {
-			return JSON.parse(data);
-		},
-		error: function error(data) {}
-	};
-
 	exports.default = $http;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	function menuBuilder(items, parentId) {
+
+	  var content = '<ul>';
+
+	  if (parentId !== 0) {
+	    content = '<ul ' + 'class=\'submenu\'' + '>';
+	  }
+
+	  for (var item in items) {
+	    var obj = items[item];
+
+	    if (!obj.parent) {
+	      obj.parent = 0;
+	    }
+
+	    if (obj.parent === parentId) {
+	      content += '<li>' + obj.name + menuBuilder(items, obj.id) + '</li>';
+	    }
+	  }
+
+	  content += '</ul>';
+
+	  return content.replace(/<ul class=\'submenu\'><\/ul>/g, '');
+	}
+
+	exports.default = menuBuilder;
 
 /***/ }
 /******/ ]);
